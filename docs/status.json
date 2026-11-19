@@ -1,93 +1,180 @@
 {
- "sources": {},
+ "sources": {
+  "hospital": {
+   "total": 15168,
+   "got": 15168,
+   "pages": 16,
+   "fields": [
+    "dutyAddr",
+    "dutyDiv",
+    "dutyDivNam",
+    "dutyEmcls",
+    "dutyEmclsName",
+    "dutyEryn",
+    "dutyEtc",
+    "dutyInf",
+    "dutyMapimg",
+    "dutyName",
+    "dutyTel1",
+    "dutyTel3",
+    "dutyTime1c",
+    "dutyTime1s",
+    "dutyTime2c",
+    "dutyTime2s",
+    "dutyTime3c",
+    "dutyTime3s",
+    "dutyTime4c",
+    "dutyTime4s",
+    "dutyTime5c",
+    "dutyTime5s",
+    "dutyTime6c",
+    "dutyTime6s",
+    "hpid",
+    "postCdn1",
+    "postCdn2",
+    "rnum",
+    "wgs84Lat",
+    "wgs84Lon"
+   ]
+  },
+  "pharmacy": {
+   "total": 25429,
+   "got": 25429,
+   "pages": 26,
+   "fields": [
+    "dutyAddr",
+    "dutyName",
+    "dutyTel1",
+    "dutyTime1c",
+    "dutyTime1s",
+    "dutyTime2c",
+    "dutyTime2s",
+    "dutyTime3c",
+    "dutyTime3s",
+    "dutyTime4c",
+    "dutyTime4s",
+    "dutyTime5c",
+    "dutyTime5s",
+    "dutyTime6c",
+    "dutyTime6s",
+    "hpid",
+    "postCdn1",
+    "postCdn2",
+    "rnum",
+    "wgs84Lat",
+    "wgs84Lon"
+   ]
+  },
+  "emergency": {
+   "total": 529,
+   "got": 529,
+   "pages": 1,
+   "fields": [
+    "dutyAddr",
+    "dutyEmcls",
+    "dutyEmclsName",
+    "dutyName",
+    "dutyTel1",
+    "dutyTel3",
+    "hpid",
+    "phpid",
+    "rnum",
+    "wgs84Lat",
+    "wgs84Lon"
+   ]
+  },
+  "holidays": {
+   "got": 46
+  }
+ },
  "errors": [],
  "skipped_no_region_or_xy": 0,
- "updated": "2026-11-19 15:28",
+ "updated": "2026-11-19 15:42",
  "regions": {
   "서울": {
-   "h": 10,
-   "p": 8,
-   "er": 1
+   "h": 3106,
+   "p": 5524,
+   "er": 74
   },
   "부산": {
-   "h": 0,
-   "p": 0,
-   "er": 0
+   "h": 1045,
+   "p": 1715,
+   "er": 37
   },
   "대구": {
-   "h": 0,
-   "p": 0,
-   "er": 0
+   "h": 769,
+   "p": 1399,
+   "er": 25
   },
   "인천": {
-   "h": 0,
-   "p": 0,
-   "er": 0
+   "h": 892,
+   "p": 1324,
+   "er": 28
   },
   "광주": {
    "h": 0,
-   "p": 0,
+   "p": 700,
    "er": 0
   },
   "대전": {
-   "h": 20,
-   "p": 16,
-   "er": 2
+   "h": 473,
+   "p": 784,
+   "er": 11
   },
   "울산": {
-   "h": 0,
-   "p": 0,
-   "er": 0
+   "h": 270,
+   "p": 444,
+   "er": 13
   },
   "세종": {
-   "h": 20,
-   "p": 18,
+   "h": 118,
+   "p": 161,
    "er": 2
   },
   "경기": {
-   "h": 10,
-   "p": 8,
-   "er": 1
+   "h": 3950,
+   "p": 6166,
+   "er": 97
   },
   "강원": {
-   "h": 0,
-   "p": 0,
-   "er": 0
+   "h": 350,
+   "p": 718,
+   "er": 23
   },
   "충북": {
-   "h": 0,
-   "p": 0,
-   "er": 0
+   "h": 427,
+   "p": 752,
+   "er": 19
   },
   "충남": {
-   "h": 0,
-   "p": 0,
-   "er": 0
+   "h": 530,
+   "p": 999,
+   "er": 20
   },
   "전북": {
-   "h": 0,
-   "p": 0,
-   "er": 0
+   "h": 441,
+   "p": 977,
+   "er": 21
   },
   "전남": {
-   "h": 0,
-   "p": 0,
-   "er": 0
+   "h": 1025,
+   "p": 886,
+   "er": 70
   },
   "경북": {
-   "h": 0,
-   "p": 0,
-   "er": 0
+   "h": 614,
+   "p": 1154,
+   "er": 35
   },
   "경남": {
-   "h": 0,
-   "p": 0,
-   "er": 0
+   "h": 969,
+   "p": 1405,
+   "er": 48
   },
   "제주": {
-   "h": 0,
-   "p": 0,
-   "er": 0
+   "h": 189,
+   "p": 321,
+   "er": 6
   }
  }
 }
