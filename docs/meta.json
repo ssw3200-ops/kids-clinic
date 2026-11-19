@@ -1,0 +1,146 @@
+{
+ "updated": "2026-11-19 15:17",
+ "sample": true,
+ "holidays": [
+  "2026-12-25",
+  "2027-01-01"
+ ],
+ "regions": {
+  "서울": {
+   "code": "seoul",
+   "lat": 37.5091,
+   "lon": 127.0362,
+   "h": 10,
+   "p": 8,
+   "er": 0
+  },
+  "부산": {
+   "code": "busan",
+   "lat": null,
+   "lon": null,
+   "h": 0,
+   "p": 0,
+   "er": 0
+  },
+  "대구": {
+   "code": "daegu",
+   "lat": null,
+   "lon": null,
+   "h": 0,
+   "p": 0,
+   "er": 0
+  },
+  "인천": {
+   "code": "incheon",
+   "lat": null,
+   "lon": null,
+   "h": 0,
+   "p": 0,
+   "er": 0
+  },
+  "광주": {
+   "code": "gwangju",
+   "lat": null,
+   "lon": null,
+   "h": 0,
+   "p": 0,
+   "er": 0
+  },
+  "대전": {
+   "code": "daejeon",
+   "lat": 36.356,
+   "lon": 127.3703,
+   "h": 20,
+   "p": 16,
+   "er": 2
+  },
+  "울산": {
+   "code": "ulsan",
+   "lat": null,
+   "lon": null,
+   "h": 0,
+   "p": 0,
+   "er": 0
+  },
+  "세종": {
+   "code": "sejong",
+   "lat": 36.4993,
+   "lon": 127.2547,
+   "h": 20,
+   "p": 18,
+   "er": 2
+  },
+  "경기": {
+   "code": "gyeonggi",
+   "lat": 37.2688,
+   "lon": 127.0216,
+   "h": 10,
+   "p": 8,
+   "er": 0
+  },
+  "강원": {
+   "code": "gangwon",
+   "lat": null,
+   "lon": null,
+   "h": 0,
+   "p": 0,
+   "er": 0
+  },
+  "충북": {
+   "code": "chungbuk",
+   "lat": null,
+   "lon": null,
+   "h": 0,
+   "p": 0,
+   "er": 0
+  },
+  "충남": {
+   "code": "chungnam",
+   "lat": null,
+   "lon": null,
+   "h": 0,
+   "p": 0,
+   "er": 0
+  },
+  "전북": {
+   "code": "jeonbuk",
+   "lat": null,
+   "lon": null,
+   "h": 0,
+   "p": 0,
+   "er": 0
+  },
+  "전남": {
+   "code": "jeonnam",
+   "lat": null,
+   "lon": null,
+   "h": 0,
+   "p": 0,
+   "er": 0
+  },
+  "경북": {
+   "code": "gyeongbuk",
+   "lat": null,
+   "lon": null,
+   "h": 0,
+   "p": 0,
+   "er": 0
+  },
+  "경남": {
+   "code": "gyeongnam",
+   "lat": null,
+   "lon": null,
+   "h": 0,
+   "p": 0,
+   "er": 0
+  },
+  "제주": {
+   "code": "jeju",
+   "lat": null,
+   "lon": null,
+   "h": 0,
+   "p": 0,
+   "er": 0
+  }
+ }
+}

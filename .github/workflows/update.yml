@@ -1,0 +1,53 @@
+name: 소아과·약국 자동 갱신
+
+on:
+  schedule:
+    - cron: "17 20 * * 0"   # 매주 월요일 05:17 (한국시간) — 원천 데이터가 주 단위로 갱신됨
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "moonlight.yaml"
+  workflow_dispatch:
+    inputs:
+      sample:
+        description: "샘플 데이터로 실행 (키 없이 테스트)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: 수집 + 암호화
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+          PAGE_PASSWORD: ${{ secrets.PAGE_PASSWORD }}
+        run: |
+          if [ "${{ inputs.sample }}" = "true" ]; then
+            python src/build.py --sample
+          else
+            python src/build.py
+          fi
+      - name: 결과 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs
+          git diff --cached --quiet && echo "변경 없음" && exit 0
+          git commit -m "소아과·약국 업데이트 $(TZ=Asia/Seoul date +%Y-%m-%d)"
+          git push
