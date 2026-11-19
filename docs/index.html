@@ -172,6 +172,10 @@ async function decrypt(enc,pw){
   const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]);
   const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(enc.salt),iterations:enc.iter,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["decrypt"]);
   const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(enc.iv)},key,b64(enc.ct));
+  if(enc.z==="gzip"){ // 암호화 전에 압축해 둔 데이터
+    const st=new Blob([pt]).stream().pipeThrough(new DecompressionStream("gzip"));
+    return JSON.parse(await new Response(st).text());
+  }
   return JSON.parse(new TextDecoder().decode(pt));
 }
 async function load(reg,pw=PW){

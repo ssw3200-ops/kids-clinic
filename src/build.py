@@ -218,7 +218,7 @@ def build(hosp: list[dict], pharm: list[dict], er: list[dict], holidays: list[st
         d["h"].sort(key=lambda r: r[0])
         d["p"].sort(key=lambda r: r[0])
         d["e"].sort(key=lambda r: r[0])
-        enc = encrypt({"region": reg, "h": d["h"], "p": d["p"], "e": d["e"]}, password)
+        enc = encrypt({"region": reg, "h": d["h"], "p": d["p"], "e": d["e"]}, password, compress=True)
         (out_dir / f"{CODES[reg]}.enc.json").write_text(json.dumps(enc), encoding="utf-8")
         meta_regions[reg] = {
             "code": CODES[reg], "lat": lat, "lon": lon,

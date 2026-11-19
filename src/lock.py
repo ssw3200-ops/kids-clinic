@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import base64
+import gzip
 import json
 import os
 
@@ -16,10 +17,16 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 ITER = 200_000
 
 
-def encrypt(obj: dict, password: str) -> dict:
+def encrypt(obj: dict, password: str, compress: bool = False) -> dict:
     salt, iv = os.urandom(16), os.urandom(12)
     kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=ITER)
     key = kdf.derive(password.encode("utf-8"))
-    ct = AESGCM(key).encrypt(iv, json.dumps(obj, ensure_ascii=False, separators=(",", ":")).encode("utf-8"), None)
+    raw = json.dumps(obj, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    if compress:  # 암호문은 압축이 안 되므로 암호화 전에 gzip
+        raw = gzip.compress(raw, 9, mtime=0)
+    ct = AESGCM(key).encrypt(iv, raw, None)
     b64 = lambda b: base64.b64encode(b).decode()  # noqa: E731
-    return {"v": 1, "iter": ITER, "salt": b64(salt), "iv": b64(iv), "ct": b64(ct)}
+    out = {"v": 1, "iter": ITER, "salt": b64(salt), "iv": b64(iv), "ct": b64(ct)}
+    if compress:
+        out["z"] = "gzip"
+    return out
