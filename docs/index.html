@@ -113,7 +113,7 @@
   <button class="more" id="more" hidden>더 보기</button>
 </main>
 <footer>
-  데이터: 국립중앙의료원 병·의원/약국 정보, 한국천문연구원 특일 정보 (공공데이터포털)<br>
+  데이터: 국립중앙의료원 병·의원/약국/응급의료기관 정보, 한국천문연구원 특일 정보 (공공데이터포털)<br>
   매주 자동 갱신 · 진료시간은 기관이 신고한 정보예요<br>
   <a class="blog" href="https://blog.naver.com/todaywithkids">🎈 아이랑 오늘 뭐하지? 블로그</a>
 </footer>
@@ -221,8 +221,8 @@ async function rows(){
   if(ME){ // 가까운 시도 3곳을 합쳐서 경계 지역(예: 세종↔대전)도 포함
     regs=Object.entries(META.regions).filter(([,m])=>m.lat).sort((a,b)=>dist(ME[0],ME[1],a[1].lat,a[1].lon)-dist(ME[0],ME[1],b[1].lat,b[1].lon)).slice(0,3).map(x=>x[0]);
   }else regs=[$("region").value];
-  for(const r of regs){const d=await load(r);out=out.concat(TAB==="p"?d.p:d.h)}
-  if(TAB==="e")out=out.filter(r=>r[6].includes("E"));
+  for(const r of regs){const d=await load(r);
+    out=out.concat(TAB==="p"?d.p:TAB==="e"?((d.e&&d.e.length)?d.e:d.h.filter(x=>x[6].includes("E"))):d.h)}
   if(!ME&&$("city").value)out=out.filter(r=>r[8]===$("city").value);
   return out;
 }
@@ -265,13 +265,13 @@ function card({r,s,d}){
   return `<div class="card">
     <div class="tags">${tags.join("")}</div>
     <div class="t">${esc(name)}</div>
-    <div class="row">🕘 오늘 ${span(s.today)}</div>
+    ${TAB==="e"?"":`<div class="row">🕘 오늘 ${span(s.today)}</div>`}
     <div class="row">📍 ${d!=null?`<b>${km(d)}</b> · `:""}${esc(addr)}</div>
     ${TAB==="e"?`<div class="row">👶 소아 진료 가능 여부는 전화로 꼭 확인하세요</div>`:""}
     <div class="btns">
-      ${tel?`<a class="call" href="tel:${esc(tel.replace(/[^0-9-]/g,""))}">📞 전화</a>`:""}
+      ${tel?`<a class="call" href="tel:${esc(tel.replace(/[^0-9-]/g,""))}">📞 ${TAB==="e"?"응급실 전화":"전화"}</a>`:""}
       <a class="map" href="https://map.naver.com/p/search/${q}" target="_blank" rel="noopener">🗺 길찾기</a>
-      <button class="wk">🕘 요일별</button>
+      ${TAB==="e"?"":`<button class="wk">🕘 요일별</button>`}
     </div>
     <table class="week" hidden>${week}</table>
   </div>`;

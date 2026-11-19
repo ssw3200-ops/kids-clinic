@@ -31,6 +31,7 @@ DOCS = ROOT / "docs"
 KST = timezone(timedelta(hours=9))
 
 HOSP_URL = "https://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlMdcncListInfoInqire"
+ER_URL = "https://apis.data.go.kr/B552657/ErmctInfoInqireService/getEgytListInfoInqire"
 PHARM_URL = "https://apis.data.go.kr/B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire"
 HOLI_URL = "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo"
 ROWS = 1000
@@ -175,17 +176,22 @@ def pack(it: dict, kind: str, moon: dict[str, set[str]]) -> tuple[str, list] | N
             flags += "P"
         if re.sub(r"\s", "", name) in moon.get(reg, set()):
             flags += "M"
+    if kind == "e":
+        flags = "E"
+        div = it.get("dutyEmclsName", "") or "응급의료기관"
+        tel = it.get("dutyTel3", "") or it.get("dutyTel1", "")  # dutyTel3 = 응급실 직통
+        return reg, [name, addr, tel, lat, lon, "00002400" * 8, flags, div, city_of(addr)]
     div = it.get("dutyDivNam", "") if kind == "h" else ""
     rec = [name, addr, it.get("dutyTel1", ""), lat, lon, times_of(it), flags, div, city_of(addr)]
     return reg, rec
 
 
-def build(hosp: list[dict], pharm: list[dict], holidays: list[str], password: str, sample: bool) -> None:
+def build(hosp: list[dict], pharm: list[dict], er: list[dict], holidays: list[str], password: str, sample: bool) -> None:
     moon = load_moon()
-    data = {r: {"h": [], "p": []} for r in REGIONS}
+    data = {r: {"h": [], "p": [], "e": []} for r in REGIONS}
     seen = set()
     skipped = 0
-    for kind, rows in (("h", hosp), ("p", pharm)):
+    for kind, rows in (("h", hosp), ("p", pharm), ("e", er)):
         for it in rows:
             hid = it.get("hpid") or (it.get("dutyName", "") + it.get("dutyAddr", ""))
             if (kind, hid) in seen:
@@ -211,11 +217,12 @@ def build(hosp: list[dict], pharm: list[dict], holidays: list[str], password: st
             lat = lon = None
         d["h"].sort(key=lambda r: r[0])
         d["p"].sort(key=lambda r: r[0])
-        enc = encrypt({"region": reg, "h": d["h"], "p": d["p"]}, password)
+        d["e"].sort(key=lambda r: r[0])
+        enc = encrypt({"region": reg, "h": d["h"], "p": d["p"], "e": d["e"]}, password)
         (out_dir / f"{CODES[reg]}.enc.json").write_text(json.dumps(enc), encoding="utf-8")
         meta_regions[reg] = {
             "code": CODES[reg], "lat": lat, "lon": lon,
-            "h": len(d["h"]), "p": len(d["p"]), "er": sum("E" in r[6] for r in d["h"]),
+            "h": len(d["h"]), "p": len(d["p"]), "er": len(d["e"]),
         }
 
     now = datetime.now(KST)
@@ -233,7 +240,7 @@ def build(hosp: list[dict], pharm: list[dict], holidays: list[str], password: st
 
 
 # ---------------------------------------------------------------- 샘플
-def sample_rows() -> tuple[list[dict], list[dict], list[str]]:
+def sample_rows() -> tuple[list[dict], list[dict], list[dict], list[str]]:
     rnd = random.Random(7)
     places = [("세종특별자치시 한누리대로 2130", 36.4800, 127.2890), ("세종특별자치시 고운서길 10", 36.5130, 127.2350),
               ("대전광역시 서구 둔산로 100", 36.3510, 127.3850), ("대전광역시 유성구 대학로 99", 36.3620, 127.3450),
@@ -269,7 +276,10 @@ def sample_rows() -> tuple[list[dict], list[dict], list[str]]:
         it["dutyTime6s"], it["dutyTime6c"] = sa_s, sa_c
         it["dutyTime7s"], it["dutyTime7c"] = su_s, su_c
         pharm.append(it)
-    return hosp, pharm, ["2026-12-25", "2027-01-01"]
+    er = [{"hpid": f"E{i}", "dutyName": f"샘플응급의료센터{i}", "dutyAddr": places[i][0], "dutyTel1": "044-222-0000",
+           "dutyTel3": "044-222-0119", "dutyEmclsName": "지역응급의료센터",
+           "wgs84Lat": str(places[i][1] + .01), "wgs84Lon": str(places[i][2] + .01)} for i in range(len(places))]
+    return hosp, pharm, er, ["2026-12-25", "2027-01-01"]
 
 
 def main() -> None:
@@ -280,12 +290,12 @@ def main() -> None:
             sys.exit("PAGE_PASSWORD 가 없어요 (GitHub Secrets 확인)")
         password = "test"
     if sample:
-        hosp, pharm, holidays = sample_rows()
+        hosp, pharm, er, holidays = sample_rows()
     else:
         key = os.environ.get("DATA_GO_KR_KEY", "").strip()
         if not key:
             sys.exit("DATA_GO_KR_KEY 가 없어요 (GitHub Secrets 확인)")
-        hosp = pharm = []
+        hosp = pharm = er = []
         try:
             hosp = fetch_all("hospital", HOSP_URL, {"QD": "D002"}, key)
         except Exception as e:  # noqa: BLE001
@@ -294,6 +304,10 @@ def main() -> None:
             pharm = fetch_all("pharmacy", PHARM_URL, {}, key)
         except Exception as e:  # noqa: BLE001
             status["errors"].append(f"약국: {e}")
+        try:
+            er = fetch_all("emergency", ER_URL, {}, key)
+        except Exception as e:  # noqa: BLE001
+            status["errors"].append(f"응급의료기관: {e} (소아과 목록의 응급실 표시로 대신함)")
         holidays = fetch_holidays(key)
         if not holidays and (DOCS / "meta.json").exists():  # 공휴일 API 실패 시 이전 값 유지
             holidays = json.loads((DOCS / "meta.json").read_text()).get("holidays", [])
@@ -304,7 +318,7 @@ def main() -> None:
             print(json.dumps(status, ensure_ascii=False, indent=1))
             print("수집 실패 — 활용신청 승인 여부를 확인하세요 (기존 데이터는 그대로 둠)")
             return
-    build(hosp, pharm, holidays, password, sample)
+    build(hosp, pharm, er, holidays, password, sample)
     if status["errors"]:
         print("\n".join(status["errors"]))
 
